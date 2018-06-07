@@ -1,0 +1,15 @@
+<!--pages/SeeFuture/SeeFuture.wxml-->
+<view class="SeeFuture-container">
+    <view class="uploader-container">
+        <image
+            class="uploader-image"
+            src="{{imgUrl}}"
+            mode="aspectFit"
+        ></image>
+    </view> 
+    <button
+        class = "uploader-button"
+        bindtap = "doUpload"
+    >上传图片</button>
+</view>
+
