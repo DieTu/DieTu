@@ -68,49 +68,61 @@ Page({
   // 上传图片接口
   doUpload: function () {
       var that = this
+      var img_sucai_Path = []
       wx.chooseImage({
-          count: 1,
+          count: 2,
           sizeType: ['compressed'],
           sourceType: ['album', 'camera'],
           success: function(res){
-              var filePath = res.tempFilePaths[0]
               wx.uploadFile({
-                  url: config.service.ProcessImageUrl,
-                  filePath: filePath,
+                  url: config.service.UploadFileUrl,
+                  filePath: res.tempFilePaths[0],
                   name: 'process_image',
                   header: { "Content-Type": "multipart/form-data" },
-                  formData: {imgPath: filePath},
                   success: function(response) {
-                      console.log(response.data)
                       response = JSON.parse(response.data)
                       response = JSON.parse(response.data)
-                      that.setData({
-                          imgUrl: response.url
+                      console.log(response)
+                      img_sucai_Path.push(response.imgPath)
+                      wx.uploadFile({
+                          url: config.service.UploadFileUrl,
+                          filePath: res.tempFilePaths[1],
+                          name: 'process_image',
+                          header: { "Content-Type": "multipart/form-data" },
+                          success: function(response) {
+                              response = JSON.parse(response.data)
+                              response = JSON.parse(response.data)
+                              console.log(response)
+                              img_sucai_Path.push(response.imgPath)
+                              console.log(img_sucai_Path)
+                              wx.request({
+                                  url: config.service.ProcessImageUrl,
+                                  method: 'POST',
+                                  data: util.json2Form({imgPath1: img_sucai_Path[0], imgPath2: img_sucai_Path[1]}),
+                                  header: {
+                                      "Content-Type": "application/x-www-form-urlencoded"
+                                  },
+                                  success: function(res) {
+                                      util.showSuccess('图片处理成功')
+                                      console.log(res.data)
+                                      res = JSON.parse(res.data.data)
+                                      console.log(res)
+                                      that.setData({
+                                          imgUrl: res.url
+                                      })
+                                  },
+                                  fail: function(e) {
+                                      util.showModel('图片处理失败')
+                                  }
+                              })
+                          },
+                          fail: function(e) {
+                          }
                       })
                   },
                   fail: function(e) {
                   }
               })
-              // wx.request({
-              //     url: config.service.ProcessImageUrl,
-              //     method: 'POST',
-              //     data: util.json2Form({imgPath: filePath}),
-              //     header: {
-              //         "Content-Type": "application/x-www-form-urlencoded"
-              //     },
-              //     success: function(res) {
-              //         util.showSuccess('图片处理成功')
-              //         console.log(res.data)
-              //         res = JSON.parse(res.data.data)
-              //         console.log(res)
-              //         that.setData({
-              //             imgUrl: res.url
-              //         })
-              //     },
-              //     fail: function(e) {
-              //         util.showModel('图片处理失败')
-              //     }
-              // })
           },
           fail: function(e) {
               console.error(e)

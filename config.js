@@ -11,7 +11,8 @@ var config = {
     service: {
         host,
         // 处理图片接口
-        ProcessImageUrl: `${host}/weapp/processImage`
+        ProcessImageUrl: `${host}/weapp/processImage`,
+        UploadFileUrl: `${host}/weapp/uploadImage`
     }
 };
 
